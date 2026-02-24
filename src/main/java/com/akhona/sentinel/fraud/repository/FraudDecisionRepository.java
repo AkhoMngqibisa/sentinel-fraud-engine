@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.*;
 
 public interface FraudDecisionRepository extends JpaRepository<FraudDecision, UUID> {
-    List<FraudDecision> findByFlagged();
+    List<FraudDecision> findByFlaggedTrue();
 }
