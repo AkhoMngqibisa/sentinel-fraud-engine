@@ -3,6 +3,8 @@ package com.akhona.sentinel.fraud.service;
 import com.akhona.sentinel.fraud.model.*;
 import com.akhona.sentinel.fraud.repository.*;
 import com.akhona.sentinel.fraud.rule.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,7 @@ public class FraudEngineService {
 
     private final RuleRegistry ruleRegistry;
     private final FraudDecisionRepository decisionRepository;
+    private static final Logger log = LoggerFactory.getLogger(FraudEngineService.class);
 
     public FraudEngineService(RuleRegistry ruleRegistry, FraudDecisionRepository decisionRepository) {
         this.ruleRegistry = ruleRegistry;
@@ -23,6 +26,8 @@ public class FraudEngineService {
     public FraudDecision assess(Transaction transaction) {
         int totalScore = 0;
         List<String> triggered = new ArrayList<>();
+
+        log.info("Assessing transaction {}", transaction.getId());
 
         for (FraudRule rule : ruleRegistry.getRules()) {
             // Get Transaction rule results
@@ -43,6 +48,7 @@ public class FraudEngineService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
+        log.info("Fraud result: score={}, flagged={}, rules={}", totalScore, flagged, triggered);
         return decisionRepository.save(fraudDecision);
     }
 }
