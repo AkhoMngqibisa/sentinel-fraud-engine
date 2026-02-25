@@ -1,4 +1,4 @@
-package com.akhona.sentinel.fraud.security;
+package com.akhona.sentinel.fraud.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
