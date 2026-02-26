@@ -4,7 +4,6 @@ import com.akhona.sentinel.fraud.messaging.TransactionProducer;
 import com.akhona.sentinel.fraud.model.*;
 import com.akhona.sentinel.fraud.repository.*;
 import com.akhona.sentinel.fraud.rule.*;
-import org.springframework.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FraudEngineService {
@@ -59,11 +57,5 @@ public class FraudEngineService {
         transactionProducer.send(transaction);
         log.info("Fraud result: score={}, flagged={}, rules={}", totalScore, flagged, triggered);
         return decisionRepository.save(fraudDecision);
-    }
-
-    @Cacheable(value = "fraudDecisions", key = "#transactionId")
-    public FraudDecision getDecision(UUID transactionId) {
-        return decisionRepository.findById(transactionId)
-                .orElseThrow();
     }
 }

@@ -15,5 +15,6 @@ public class TransactionProducer {
 
     public void send(Transaction transaction) {
         kafkaTemplate.send("transaction-events", transaction);
+        System.out.println("Sent transaction: " + transaction.getId());
     }
 }

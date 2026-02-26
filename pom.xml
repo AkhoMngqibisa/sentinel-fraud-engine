@@ -86,8 +86,6 @@
 		<dependency>
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
-			<version>4.0.0-M1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Spring doc OpenAPI -->
@@ -131,8 +129,6 @@
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
-			<version>4.1.0-M1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Redis -->
@@ -147,6 +143,11 @@
 			<artifactId>bucket4j-core</artifactId>
 			<version>8.7.0</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 
 	</dependencies>

@@ -60,7 +60,7 @@ Fraud Decision
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ````
 sentinel-fraud-engine
