@@ -1,14 +1,14 @@
-version: '3.9'
 services:
+
   app:
     build: .
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/fraudengine
-      SPRING_DATASOURCE_USERNAME: fraudengineuser
-      SPRING_DATASOURCE_PASSWORD: Fraudenginep@ss
-      SPRING_REDIS_HOST: redis
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/fraudengine?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=fraudengineuser
+      - SPRING_DATASOURCE_PASSWORD=Fraudenginep@ss
+      - SPRING_REDIS_HOST=redis
     depends_on:
       - mysql
       - redis
@@ -17,8 +17,10 @@ services:
     image: mysql:8
     container_name: sentinel-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: sentinel
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=fraudengine
+      - MYSQL_USER=fraudengineuser
+      - MYSQL_PASSWORD=Fraudenginep@ss
     ports:
       - "3306:3306"
 

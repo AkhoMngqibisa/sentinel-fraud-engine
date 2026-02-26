@@ -8,6 +8,9 @@ ARG JAR_FILE=target/sentinel-fraud-engine.jar
 # Copy the jar into containers
 COPY ${JAR_FILE} app.jar
 
+COPY wait-for-it.sh /wait-for-it.sh
+CMD ["./wait-for-it.sh", "mysql:3306", "--", "java", "-jar", "app.jar"]
+
 # Expose Spring boot default port
 EXPOSE 8080
 
