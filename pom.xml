@@ -153,6 +153,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>sentinel-fraud-engine</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
