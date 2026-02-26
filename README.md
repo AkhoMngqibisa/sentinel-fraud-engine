@@ -30,3 +30,87 @@ The architecture follows:
 - Event-Driven Ready
 
 ---
+
+## Architecture
+
+### High-Level Flow
+
+````
+Client → REST API → RuleEngine → FraudRules
+↓
+Redis / MySQL
+↓
+Fraud Decision
+
+````
+
+---
+
+## Technology Stack
+
+| Layer | Technology |
+|-------|------------|
+| Language | Java 21 |
+| Framework | Spring Boot 3 |
+| Database | MySQL |
+| Cache | Redis |
+| Security | JWT |
+| Metrics | Prometheus |
+| Containerization | Docker |
+
+---
+
+## 📁 Project Structure
+
+````
+sentinel-fraud-engine
+│
+├── src/main/java/com/akhona/sentinel/fraud
+│ ├── config
+│ │ ├── SecurityConfig.java
+│ │ └── KafkaConfig.java
+│ │
+│ ├── controller
+│ │ └── TransactionController.java
+│ │
+│ ├── engine
+│ │ └── RuleEngine.java
+│ │
+│ ├── model
+│ │ ├── Transaction.java
+│ │ ├── FraudResult.java
+│ │ └── FraudDecisiom.java
+│ │
+│ ├── repository
+│ │ ├── UserRepository.java
+│ │ └── TransactionRepository.java
+│ │
+│ ├── rule
+│ │ ├── FraudRule.java
+│ │ ├── HighAmountRule.java
+│ │ ├── VelocityRule.java
+│ │ ├── GeoLocationMismatchRule.java
+│ │ ├── BlacklistRule.java
+│ │ ├── DeviceFingerprintRule.java
+│ │ ├── NightTimeTransactionRule.java
+│ │ └── RapidAmountIncreaseRule.java
+│ │
+│ ├── service
+│ │ └── FrauEngineService.java
+│ │
+│ └── SentinelFraudEngineApplication.java
+│
+├── src/test/java
+│ └── FraudIntegrationTest.java
+│
+├── pom.xml
+├── application.properties
+└── README.md
+
+````
+
+---
+#### 👤 Author
+##### Akhona Mngqibisa
+##### Software Engineer
+##### Cape Town, South Africa
