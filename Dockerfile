@@ -1,18 +1,28 @@
-# Use OpenJSK 17
-FROM eclipse-temurin:17-jdk-alpine
-LABEL authors="Akhona"
+# Stage 1: Build the JAR
+FROM maven:3.9.4-eclipse-temurin-21 AS build
 
 WORKDIR /app
-ARG JAR_FILE=target/sentinel-fraud-engine.jar
 
-# Copy the jar into containers
-COPY ${JAR_FILE} app.jar
+COPY pom.xml .
+COPY mvnw .
+COPY .mvn/ .mvn/
+COPY src ./src
 
-COPY wait-for-it.sh /wait-for-it.sh
-CMD ["./wait-for-it.sh", "mysql:3306", "--", "java", "-jar", "app.jar"]
+RUN chmod +x mvnw
+RUN ./mvnw -B clean package -DskipTests
 
-# Expose Spring boot default port
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jdk-alpine
+
+WORKDIR /app
+
+# Copy built JAR
+COPY --from=build /app/target/*.jar app.jar
+
+# Copy entrypoint
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 EXPOSE 8080
 
-# Run the jar
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["/app/entrypoint.sh"]
