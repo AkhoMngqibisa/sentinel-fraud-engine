@@ -2,6 +2,7 @@ package com.akhona.sentinel.fraud.rule;
 
 import lombok.*;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class RuleResult {
