@@ -1,13 +1,14 @@
 package com.akhona.sentinel.fraud.model;
 
+import com.akhona.sentinel.fraud.rule.RuleResult;
 import lombok.*;
 
 @Getter
-public class FraudResult {
+public class FraudResult extends RuleResult {
 
-    private boolean flagged;
-    private String ruleCode;
-    private String message;
+    private final boolean flagged;
+    private final String ruleCode;
+    private final String message;
 
     private FraudResult(boolean flagged, String ruleCode, String message) {
         this.flagged = flagged;

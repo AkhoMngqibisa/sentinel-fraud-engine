@@ -1,5 +1,7 @@
 package com.akhona.sentinel.fraud.rule;
 
+import com.akhona.sentinel.fraud.config.HighAmountRuleProperties;
+import com.akhona.sentinel.fraud.model.FraudResult;
 import com.akhona.sentinel.fraud.model.Transaction;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +10,11 @@ import java.math.BigDecimal;
 @Component
 public class HighAmountRule implements FraudRule {
 
-    private static final BigDecimal THRESHOLD = new BigDecimal(50000);
+    private final HighAmountRuleProperties properties;
+
+    public HighAmountRule(HighAmountRuleProperties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public String getRuleName() {
@@ -19,10 +25,18 @@ public class HighAmountRule implements FraudRule {
     /*
       Flag if amount > threshold
      */
-    public RuleResult check(Transaction transaction) {
-        if (transaction.getAmount().compareTo(THRESHOLD) > 0) {
-            return new RuleResult(true, 50);
+    public FraudResult check(Transaction transaction) {
+        if (!properties.getCurrency().equalsIgnoreCase(transaction.getCurrency())) {
+            return FraudResult.clear();
         }
-        return new RuleResult(false, 0);
+
+        if (transaction.getAmount().compareTo(BigDecimal.valueOf(properties.getThreshold())) > 0) {
+            return FraudResult.flag(
+                    "HIGH_AMOUNT",
+                    "Transaction exceeds allowed threshold of " + properties.getThreshold()
+            );
+        }
+
+        return FraudResult.clear();
     }
 }
