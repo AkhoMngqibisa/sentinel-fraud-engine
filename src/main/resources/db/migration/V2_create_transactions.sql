@@ -2,6 +2,8 @@ CREATE TABLE transactions (
     id              VARCHAR(36)     PRIMARY KEY
 ,   user_id         VARCHAR(255)
 ,   amount          DECIMAL(12,2)
+,   account_id      VARCHAR(50)     NOT NULL
+,   merchant_id     VARCHAR(50)     NOT NULL
 ,   currency        VARCHAR(10)
 ,   merchant        VARCHAR(255)
 ,   location        VARCHAR(50)
