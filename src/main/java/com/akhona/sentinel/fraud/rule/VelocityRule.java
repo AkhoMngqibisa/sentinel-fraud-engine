@@ -3,11 +3,13 @@ package com.akhona.sentinel.fraud.rule;
 import com.akhona.sentinel.fraud.config.VelocityRuleProperties;
 import com.akhona.sentinel.fraud.model.FraudResult;
 import com.akhona.sentinel.fraud.model.Transaction;
+import lombok.NoArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
+@NoArgsConstructor(force = true)
 @Component
 public class VelocityRule implements FraudRule {
 
