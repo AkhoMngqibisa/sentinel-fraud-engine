@@ -29,4 +29,13 @@ public class Transaction {
     private String merchant;
     private String location;
     private LocalDateTime timestamp;
+
+    public Transaction(String userId, BigDecimal amount, String currency, String merchant, String location) {
+        this.userId = userId;
+        this.amount = amount;
+        this.currency = currency;
+        this.merchant = merchant;
+        this.location = location;
+        this.timestamp = LocalDateTime.now();
+    }
 }

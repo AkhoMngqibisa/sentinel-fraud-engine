@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 
 @Component
-public class VelocityRule implements FraudRule {
+public class VelocityRule {
 
     private final TransactionRepository transactionRepository;
     private final StringRedisTemplate stringRedisTemplate;
@@ -33,22 +33,22 @@ public class VelocityRule implements FraudRule {
 //        return new RuleResult(false, 0);
 //    }
 
-    @Override
-    public RuleResult check(Transaction transaction) {
-        String key = "velocity: " + transaction.getUserId();
-
-        Long count = stringRedisTemplate.opsForValue().increment(key);
-
-        stringRedisTemplate.expire(key, Duration.ofMinutes(1));
-
-        if (count >= 3) {
-            return new RuleResult(true, 40);
-        }
-        return new RuleResult(false, 0);
-    }
-
-    @Override
-    public String getRuleName() {
-        return "VELOCITY";
-    }
+//    @Override
+//    public RuleResult check(Transaction transaction) {
+//        String key = "velocity: " + transaction.getUserId();
+//
+//        Long count = stringRedisTemplate.opsForValue().increment(key);
+//
+//        stringRedisTemplate.expire(key, Duration.ofMinutes(1));
+//
+//        if (count >= 3) {
+//            return new RuleResult(true, 40);
+//        }
+//        return new RuleResult(false, 0);
+//    }
+//
+//    @Override
+//    public String getRuleName() {
+//        return "VELOCITY";
+//    }
 }
