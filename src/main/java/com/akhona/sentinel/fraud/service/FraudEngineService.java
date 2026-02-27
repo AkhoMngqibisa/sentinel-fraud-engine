@@ -1,5 +1,6 @@
 package com.akhona.sentinel.fraud.service;
 
+import com.akhona.sentinel.fraud.exception.BusinessException;
 import com.akhona.sentinel.fraud.messaging.TransactionProducer;
 import com.akhona.sentinel.fraud.model.*;
 import com.akhona.sentinel.fraud.repository.*;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,10 @@ public class FraudEngineService {
     public FraudDecision assess(Transaction transaction) {
         int totalScore = 0;
         List<String> triggered = new ArrayList<>();
+
+        if(transaction.getAmount().compareTo(BigDecimal.valueOf(0)) <= 0){
+            throw new BusinessException("Invalid transaction", List.of("Amount must be greater than 0"));
+        }
 
         log.info("Assessing transaction {}", transaction.getId());
 
