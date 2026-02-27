@@ -30,6 +30,7 @@ public class Transaction {
     private String location;
     private String merchantId;
     private String accountId;
+    private String deviceId;
     private LocalDateTime timestamp;
 
     public Transaction(String userId, BigDecimal amount, String currency, String merchant, String location) {

@@ -10,8 +10,10 @@ CREATE TABLE transactions (
 ,   device_id       VARCHAR(100)
 ,   flagged         BOOLEAN         DEFAULT FALSE
 ,   rule_code       VARCHAR(50)
+,   device_id       VARCHAR(100)
 ,   country         VARCHAR(5)
 ,   timestamp       DATETIME
+CONSTRAINT fk_tx_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE INDEX idx_tx_user ON transactions(user_id);
