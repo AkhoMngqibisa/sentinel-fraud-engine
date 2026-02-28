@@ -1,9 +1,17 @@
 services:
 
+  #############################
+  #  Spring Boot App          #
+  #############################
   app:
     build: .
     image: sentinel-fraud-engine
+    container_name: sentinel-app
     depends_on:
+      zookeeper:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
       mysql:
         condition: service_healthy
       redis:
@@ -16,40 +24,108 @@ services:
       SPRING_DATASOURCE_PASSWORD: Fraudenginep@ss
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_SECURITY_USER_NAME: admin
       SPRING_SECURITY_USER_PASSWORD: admin
+      SPRING_PROFILES_ACTIVE: docker
     networks:
       - sentinel-net
 
+  #############################
+  # 1) Zookeeper
+  #############################
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: sentinel-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - sentinel-net
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  #############################
+  # 2) Kafka Broker
+  #############################
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: sentinel-kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"    # for Docker internal network
+      - "29092:29092"  # for local host access
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - sentinel-net
+
+  #############################
+  # 3) MySQL Database        #
+  #############################
   mysql:
     image: mysql:8
+    container_name: sentinel-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: fraudengine
       MYSQL_USER: fraudengineuser
       MYSQL_PASSWORD: Fraudenginep@ss
     ports:
-      - "3306:3306"
+      - "3307:3306"   # Changed host port to avoid conflicts
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s
       timeout: 5s
       retries: 10
+    volumes:
+      - mysql-data:/var/lib/mysql
     networks:
       - sentinel-net
 
+  #############################
+  # 4) Redis Cache           #
+  #############################
   redis:
     image: redis:7
+    container_name: sentinel-redis
     ports:
       - "6379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
-      interval: 5s
+      interval: 3s
       timeout: 3s
       retries: 5
     networks:
       - sentinel-net
 
+#############################
+#  Networks                #
+#############################
 networks:
   sentinel-net:
     driver: bridge
+#############################
+#  Volumes                  #
+#############################
+volumes:
+  zookeeper-data:
+  zookeeper-datalog:
+  kafka-data:
+  mysql-data:

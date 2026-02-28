@@ -16,6 +16,9 @@ FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
+# Install MySQL client for health check script
+# RUN apk add --no-cache mysql-client
+
 # Copy built JAR
 COPY --from=build /app/target/*.jar app.jar
 
