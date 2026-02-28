@@ -1,19 +1,7 @@
 # Sentinel Fraud Engine
 
-Production-grade fraud detection microservice built with:
-
-- Java 21
-- Spring Boot 3
-- MySQL
-- Redis
-- JWT Security
-- Prometheus Metrics
-
----
-
-## Overview
-
-Sentinel Fraud Engine is a scalable, rule-based fraud detection system designed for financial transaction monitoring.
+A rule-based, real-time fraud detection engine built with Spring Boot, Kafka, Redis, and MySQL.  
+Designed to evaluate financial transactions, produce risk decisions, and integrate with event streams.
 
 It evaluates transactions against configurable rules including:
 
@@ -21,8 +9,17 @@ It evaluates transactions against configurable rules including:
 - Velocity Rule (Redis-based)
 - Geo Location Mismatch
 - Blacklist Validation
-- Device Fingerprint Detection
 
+##  Features
+- REST API for fraud evaluation
+- Rule Engine for configurable fraud logic
+- Kafka producer/consumer architecture
+- Redis support for caching/fast state
+- MySQL persistence
+- OpenAPI/Swagger documentation
+- Dockerized for local and production use
+
+## Architecture Overview
 
 The architecture follows:
 
@@ -30,13 +27,15 @@ The architecture follows:
 - Clean Separation of Concerns
 - Event-Driven Ready
 
----
-
-## Architecture
-
 ### High-Level Flow
 
 ````
+Client → REST Controller → Service Layer → Rule Evaluation →  
+DB Persistence (MySQL) + Redis cache + Kafka Messaging
+````
+
+````
+
 Client → REST API → RuleEngine → FraudRules
 ↓
 Redis / MySQL
@@ -45,6 +44,14 @@ Fraud Decision
 
 ````
 
+- Java 21
+- Spring Boot 3
+- MySQL 8
+- Redis 7
+- JWT Security
+- Prometheus Metrics
+- Kafka (with Zookeeper)
+- Swagger/OpenAPI
 ---
 
 ## Technology Stack
@@ -154,45 +161,126 @@ fraud.rules.velocity.max-transactions=5
 ```
 
 ---
+## Getting Started
 
-## Security
+### Prerequisites
+Install the following tools (local development):
 
-All endpoints require JWT authentication.
+✔ Java 21+  
+✔ Maven  
+✔ Docker & Docker Compose
+
+---
+
+## Run Locally (Development)
+
+1. Clone the repository
+```bash
+git clone https://github.com/AkhoMngqibisa/sentinel-fraud-engine.git
+cd sentinel-fraud-engine
 
 ````
-Authorization: Bearer <token>
+2. Update application.properties with local Redis/MySQL connections
+
+3. Run:
+````
+mvn clean install
+mvn spring-boot:run
 ````
 
-## API
+4. Swagger UI:
+```
+http://localhost:8080/swagger-ui.html
+```
+---
+## Run with Docker (Recommended)
+Build and start all services:
+
+````
+docker compose up --build
+````
+
+All services start with proper order and health checks.
+
+Swagger UI will be available at:
+
+```
+http://localhost:8080/swagger-ui.html
+
+```
+Use:
+```
+Username: admin
+Password: admin
+
+```
+---
+## API Usage
 
 Evaluate Transaction
-
+```
 POST /api/v1/transactions
 
 ```
-{
-  "id": "tx-123",
-  "userId": "user-1",
+
+```
+curl -X 'POST' \
+  'http://localhost:8080/api/v1/transactions' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "userId": "USR100234",
   "amount": 15000,
   "currency": "ZAR",
-  "merchantId": "m-100",
-  "accountId": "acc-1",
-  "country": "US",
-  "deviceId": "device-abc",
-  "timestamp": "2026-02-22T02:00:00"
-}
+  "merchant": "Amazon SA",
+  "location": "Cape Town, ZA",
+  "merchantId": "MERCH99821",
+  "accountId": "ACC12345",
+  "deviceId": "DEVICE-ABC-9988"
+}'
 ```
 
 Respone
 
 ```
 {
-  "flagged": true,
-  "ruleCode": "HIGH_AMOUNT",
-  "message": "Transaction exceeds allowed threshold"
+  "transactionId": "550e8400-e29b-41d4-a716-446655440000",
+  "fraudScore": 82,
+  "flagged": "HIGH",
+  "triggeredRules": "HighAmountRule, GeoLocationRule",
+  "createdAt": "2026-03-01T22:08:15.109Z"
 }
 
 ```
+----
+
+
+## Security
+
+- Swagger UI is automatically available.
+- Use it to explore request/response models with descriptions.
+- Make sure Basic Auth is authorized (Admin credentials).
+
+````
+Username: admin
+Password: admin
+````
+
+These can be overridden in:
+```
+application.properties
+```
+
+## Configuration
+| Property                         | Description         |
+| -------------------------------- | ------------------- |
+| `spring.datasource.url`          | JDBC URL for MySQL  |
+| `spring.data.redis.host`         | Redis hostname      |
+| `spring.kafka.bootstrap-servers` | Kafka broker list   |
+| `spring.security.user.name`      | Basic Auth user     |
+| `spring.security.user.password`  | Basic Auth password |
+
+
 
 ## Testing
 
@@ -228,7 +316,10 @@ docker-compose up
 - Kafka event streaming
 - Rule management UI
 - Dynamic rule toggling
-- Machine learning integration
+- Add Flyway for database migrations
+- Add CI/CD pipeline (GitHub Actions)
+- Add integration tests using Testcontainers 
+- Add JWT authentication instead of Basic Auth
 - Add more rules like 
   - Night-Time Risk
   - Rapid Amount Spike Detection
