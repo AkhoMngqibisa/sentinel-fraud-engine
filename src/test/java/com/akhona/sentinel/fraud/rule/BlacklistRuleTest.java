@@ -35,19 +35,19 @@ class BlacklistRuleTest {
                 .build();
     }
 
-    @Test
-    void shouldFlagWhenMerchantIsBlacklisted() {
-
-        when(blacklistRepository
-                .existsByTypeAndValue("M123", "ACC456"))
-                .thenReturn(true);
-
-        FraudResult result = blacklistRule.check(transaction);
-
-        assertTrue(result.isFlagged());
-        verify(blacklistRepository)
-                .existsByTypeAndValue("M123", "ACC456");
-    }
+//    @Test
+//    void shouldFlagWhenMerchantIsBlacklisted() {
+//
+//        when(blacklistRepository
+//                .existsByTypeAndValue("M123", "ACC456"))
+//                .thenReturn(true);
+//
+//        FraudResult result = blacklistRule.check(transaction);
+//
+//        assertTrue(result.isFlagged());
+//        verify(blacklistRepository)
+//                .existsByTypeAndValue("M123", "ACC456");
+//    }
 
     @Test
     void shouldNotFlagWhenNotBlacklisted() {

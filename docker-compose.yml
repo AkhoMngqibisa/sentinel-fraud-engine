@@ -13,6 +13,8 @@ services:
       SPRING_DATASOURCE_USERNAME: fraudengineuser
       SPRING_DATASOURCE_PASSWORD: Fraudenginep@ss
       SPRING_REDIS_HOST: redis
+      SPRING_SECURITY_USER_NAME: admin
+      SPRING_SECURITY_USER_PASSWORD: admin
     networks:
       - sentinel-net
 
@@ -26,7 +28,7 @@ services:
     ports:
       - "3306:3306"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s
       timeout: 5s
       retries: 10
